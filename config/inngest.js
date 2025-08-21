@@ -28,7 +28,7 @@ export const syncUserCreation = inngest.createFunction(
 );
 
 // Inngest Function to update user data to a database
-export const asyncUserUpdation = inngest.createFunction(
+export const syncUserUpdation = inngest.createFunction(
   {
     id: "update-user-from-clerk",
   },
@@ -50,7 +50,7 @@ export const asyncUserUpdation = inngest.createFunction(
 );
 
 // Inngest Function to delete user data from a database
-export const asyncUserDeletion = inngest.createFunction(
+export const syncUserDeletion = inngest.createFunction(
   {
     id: "delete-user-from-clerk",
   },
