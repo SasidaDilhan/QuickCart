@@ -12,10 +12,11 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      dbName: "quickcart",
     };
 
     cached.promise = mongoose
-      .connect(`${process.env.MONGODB_URI}/quickcart`, opts)
+      .connect(`${process.env.MONGODB_URI}`, opts)
       .then((mongoose) => {
         return mongoose;
       });
