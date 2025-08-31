@@ -41,11 +41,11 @@ const AddProduct = () => {
       if (data.success) {
         toast.success("data.message");
         setFiles([]);
-        setName("");
-        setDescription("");
+        setName(" ");
+        setDescription(" ");
         setCategory("Earphone");
-        setPrice("");
-        setOfferPrice("");
+        setPrice(" ");
+        setOfferPrice(" ");
       } else {
         toast.error(data.message);
       }
