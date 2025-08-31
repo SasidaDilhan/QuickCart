@@ -6,7 +6,6 @@ import Product from "@/model/Product";
 import { getAuth } from "@clerk/nextjs/server";
 import { v2 as cloudinary } from "cloudinary";
 import { NextResponse } from "next/server";
-import { resolve } from "styled-jsx/css";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -84,5 +83,7 @@ export async function POST(request) {
       message: "Upload Successful",
       newProduct,
     });
-  } catch (error) {NextResponse.json({ success: false, message: error.message });}
+  } catch (error) {
+    NextResponse.json({ success: false, message: error.message });
+  }
 }
