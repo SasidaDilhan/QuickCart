@@ -76,7 +76,7 @@ const OrderSummary = () => {
       if (data.success) {
         toast.success(data.message);
         setCartItems({});
-        router.oush("/order-placed");
+        router.push("/order-placed");
       } else {
         toast.error(data.message);
       }
