@@ -15,7 +15,7 @@ cloudinary.config({
 
 export async function POST(request) {
   try {
-    const { userID } = getAuth(request);
+    const { userId } = getAuth(request);
 
     const isSeller = await authSeller(userID);
 
@@ -68,7 +68,7 @@ export async function POST(request) {
     await dbConnect();
 
     const newProduct = await Product.create({
-      userID,
+      userId,
       name,
       description,
       category,
