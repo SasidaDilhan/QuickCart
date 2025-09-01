@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { tree } from "next/dist/build/templates/app-page";
+
 
 const orderSchema = new mongoose.Schema({
   userId: { type: String, requiered: true, ref: "user" },
