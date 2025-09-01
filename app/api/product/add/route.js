@@ -17,10 +17,10 @@ export async function POST(request) {
   try {
     const { userId } = getAuth(request);
 
-    const isSeller = await authSeller(userID);
+    const isSeller = await authSeller(userId);
 
     if (!isSeller) {
-      return NextResponse.json({ success: false, message: "not authorizes" });
+      return NextResponse.json({ success: false, message: "not authorized" });
     }
 
     const formData = await request.formData();
@@ -29,7 +29,7 @@ export async function POST(request) {
     const description = formData.get("description");
     const category = formData.get("category");
     const price = formData.get("price");
-    const offerPrice = formData.get("offerProce");
+    const offerPrice = formData.get("offerPrice");
 
     const files = formData.getAll("images");
 
@@ -42,8 +42,8 @@ export async function POST(request) {
 
     const result = await Promise.all(
       files.map(async (file) => {
-        const arryBuffer = await file.arryBuffer();
-        const buffer = Buffer.from(arryBuffer);
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
 
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
@@ -84,6 +84,7 @@ export async function POST(request) {
       newProduct,
     });
   } catch (error) {
-    NextResponse.json({ success: false, message: error.message });
+    console.error("Product upload error:", error);
+    return NextResponse.json({ success: false, message: error.message });
   }
 }

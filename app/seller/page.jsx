@@ -39,7 +39,7 @@ const AddProduct = () => {
       });
 
       if (data.success) {
-        toast.success("data.message");
+        toast.success(data.message);
         setFiles([]);
         setName(" ");
         setDescription(" ");

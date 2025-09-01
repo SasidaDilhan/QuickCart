@@ -25,7 +25,16 @@ export const AppContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
 
   const fetchProductData = async () => {
-    setProducts(productsDummyData);
+    try {
+      const { data } = await axios.get("/api/product/list");
+      if (data.success) {
+        setProducts(data.products);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const fetchUserData = async () => {
@@ -42,7 +51,8 @@ export const AppContextProvider = (props) => {
 
       if (data.success) {
         setUserData(data.user);
-        setCartItems(data.user.cartItems);
+        // Ensure cartItems is always an object
+        setCartItems(data.user.cartItems || {});
       } else {
         toast.error(data.message);
       }
@@ -52,44 +62,75 @@ export const AppContextProvider = (props) => {
   };
 
   const addToCart = async (itemId) => {
-    let cartData = structuredClone(cartItems);
-    if (cartData[itemId]) {
-      cartData[itemId] += 1;
-    } else {
-      cartData[itemId] = 1;
+    try {
+      // Ensure cartItems is always an object
+      const currentCartItems = cartItems || {};
+      let cartData = structuredClone(currentCartItems);
+
+      if (cartData[itemId]) {
+        cartData[itemId] += 1;
+      } else {
+        cartData[itemId] = 1;
+      }
+
+      setCartItems(cartData);
+      toast.success("Item added to cart");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add item to cart");
     }
-    setCartItems(cartData);
   };
 
   const updateCartQuantity = async (itemId, quantity) => {
-    let cartData = structuredClone(cartItems);
-    if (quantity === 0) {
-      delete cartData[itemId];
-    } else {
-      cartData[itemId] = quantity;
+    try {
+      // Ensure cartItems is always an object
+      const currentCartItems = cartItems || {};
+      let cartData = structuredClone(currentCartItems);
+
+      if (quantity === 0) {
+        delete cartData[itemId];
+      } else {
+        cartData[itemId] = quantity;
+      }
+
+      setCartItems(cartData);
+    } catch (error) {
+      console.error("Error updating cart quantity:", error);
+      toast.error("Failed to update cart quantity");
     }
-    setCartItems(cartData);
   };
 
   const getCartCount = () => {
-    let totalCount = 0;
-    for (const items in cartItems) {
-      if (cartItems[items] > 0) {
-        totalCount += cartItems[items];
+    try {
+      const currentCartItems = cartItems || {};
+      let totalCount = 0;
+      for (const items in currentCartItems) {
+        if (currentCartItems[items] > 0) {
+          totalCount += currentCartItems[items];
+        }
       }
+      return totalCount;
+    } catch (error) {
+      console.error("Error getting cart count:", error);
+      return 0;
     }
-    return totalCount;
   };
 
   const getCartAmount = () => {
-    let totalAmount = 0;
-    for (const items in cartItems) {
-      let itemInfo = products.find((product) => product._id === items);
-      if (cartItems[items] > 0) {
-        totalAmount += itemInfo.offerPrice * cartItems[items];
+    try {
+      const currentCartItems = cartItems || {};
+      let totalAmount = 0;
+      for (const items in currentCartItems) {
+        let itemInfo = products.find((product) => product._id === items);
+        if (currentCartItems[items] > 0 && itemInfo) {
+          totalAmount += itemInfo.offerPrice * currentCartItems[items];
+        }
       }
+      return Math.floor(totalAmount * 100) / 100;
+    } catch (error) {
+      console.error("Error getting cart amount:", error);
+      return 0;
     }
-    return Math.floor(totalAmount * 100) / 100;
   };
 
   useEffect(() => {
