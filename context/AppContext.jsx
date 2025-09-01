@@ -1,8 +1,6 @@
 "use client";
-import { productsDummyData, userDummyData } from "@/assets/assets";
 import { useAuth, useUser } from "@clerk/nextjs";
 import axios from "axios";
-import { err } from "inngest/types";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -74,29 +72,48 @@ export const AppContextProvider = (props) => {
       }
 
       setCartItems(cartData);
-      toast.success("Item added to cart");
+
+      if (user) {
+        try {
+          const token = await getToken();
+
+          await axios.post(
+            "/api/cart/update",
+            { cartData },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          toast.success("Item added to cart");
+        } catch (error) {
+          toast.error(error.message);
+        }
+      }
     } catch (error) {
-      console.error("Error adding to cart:", error);
       toast.error("Failed to add item to cart");
     }
   };
 
   const updateCartQuantity = async (itemId, quantity) => {
-    try {
-      // Ensure cartItems is always an object
-      const currentCartItems = cartItems || {};
-      let cartData = structuredClone(currentCartItems);
+    let cartData = structuredClone(cartItems);
 
-      if (quantity === 0) {
-        delete cartData[itemId];
-      } else {
-        cartData[itemId] = quantity;
+    if (quantity === 0) {
+      delete cartData[itemId];
+    } else {
+      cartData[itemId] = quantity;
+    }
+    setCartItems(cartData);
+
+    if (user) {
+      try {
+        const token = await getToken();
+        await axios.post(
+          "/api/cart/update",
+          { cartData },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        toast.success("Cart Updated");
+      } catch (error) {
+        toast.error(error.message);
       }
-
-      setCartItems(cartData);
-    } catch (error) {
-      console.error("Error updating cart quantity:", error);
-      toast.error("Failed to update cart quantity");
     }
   };
 
